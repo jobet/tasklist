@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MdEdit, MdDelete, MdSave } from "react-icons/md";
+import { MdDragIndicator, MdEdit, MdDelete, MdSave } from "react-icons/md";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function TaskList() {
@@ -35,18 +35,30 @@ function TaskList() {
 
   const deleteTask = (index) => {
     setTasks(tasks.filter((_, i) => i !== index));
+    setEditingIndex(null);
   };
 
   const updateTaskText = (e) => setUpdatedTaskText(e.target.value);
 
-  const saveUpdatedTask = () => {
-    setTasks(
-      tasks.map((task, i) =>
-        i === editingIndex ? { ...task, text: updatedTaskText } : task
-      )
-    );
-    setEditingIndex(null);
-    setUpdatedTaskText('');
+  const startEditing = (index) => {
+    setEditingIndex(index);
+    setUpdatedTaskText(tasks[index].text);
+  };
+
+  const saveUpdatedTask = (e) => {
+    if (e.key === 'Enter' && updatedTaskText.trim()) {
+      setTasks(
+        tasks.map((task, i) =>
+          i === editingIndex ? { ...task, text: updatedTaskText } : task
+        )
+      );
+      setEditingIndex(null);
+      setUpdatedTaskText('');
+    }
+    if (e.key === 'Escape') {
+      setEditingIndex(null);
+      setUpdatedTaskText('');
+    }
   };
 
   const reorderTasks = (result) => {
@@ -73,7 +85,9 @@ function TaskList() {
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
                       >
-                        <div className="taskContainer">
+                        <div className={`${task.completed ? 'taskCompleted' : 'taskContainer'}`}>
+                          <div className="taskListItem">
+                          <MdDragIndicator className="dragIndicator" />
                           <input
                             type="checkbox"
                             checked={task.completed}
@@ -83,28 +97,30 @@ function TaskList() {
                           {editingIndex === index ? (
                             <>
                               <input
+                                className="editTaskItem"
                                 type="text"
                                 value={updatedTaskText}
                                 onChange={updateTaskText}
+                                onKeyDown={saveUpdatedTask}
                               />
                               <div className="taskDate">
                                 <span>{task.date.toLocaleDateString()}</span>
                               </div>
-                              <button className="editTaskBtn" onClick={saveUpdatedTask}>
-                                <MdSave />
+                              <button className="delTaskBtn" onClick={() => deleteTask(index)}>
+                                <MdDelete />
                               </button>
                             </>
                           ) : (
                             <>
                               <div className="taskItem">
-                                <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+                                <span>
                                   {task.text}
                                 </span>
                               </div>
                               <div className="taskDate">
                                 <span>{task.date.toLocaleDateString()}</span>
                               </div>
-                              <button className="editTaskBtn" onClick={() => setEditingIndex(index)}>
+                              <button className="editTaskBtn" onClick={() => startEditing(index)}>
                                 <MdEdit />
                               </button>
                               <button className="delTaskBtn" onClick={() => deleteTask(index)}>
@@ -112,6 +128,7 @@ function TaskList() {
                               </button>
                             </>
                           )}
+                          </div>
                         </div>
                       </li>
                     )}
@@ -124,6 +141,7 @@ function TaskList() {
         </div>
         <div className="addTaskSection">
           <input
+            className="addTaskInput"
             type="text"
             onChange={inputChange}
             value={newTask}

@@ -1,5 +1,5 @@
 body {
-    background-color: #333333;
+    background-color: #262329;
     color: #ffffff;
     font-family: Bierstadt, sans-serif;
     text-align: center;
@@ -17,19 +17,10 @@ body {
     color: #fff;
     border: none;
     border-radius: 8px;
-    font-size: 20px;
+    font-size: 12px;
     display: flex;
-    align-items:center;
+    align-items: center;
     padding: 12px 12px;
-}
-  
-.container input {
-    font-family: Bierstadt, sans-serif;
-    border: none;
-    border-radius: 8px;
-    font-size: 20px;
-    padding: 6px 12px;
-    height: 30px;
 }
 
 .taskWindow {
@@ -38,24 +29,66 @@ body {
   
   
 .taskContainer {
+    position: relative;
+}
+
+
+.taskCompleted {
+    position: relative;
+}
+
+.taskCompleted:after {
+    cursor: default;
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    border-top: 1px solid rgb(255,255,255, 0.8); /* Adjust color and thickness as desired */
+}
+
+.taskListItem {
     display: grid;
-    grid-template-columns: max-content auto auto max-content max-content;
+    grid-template-columns: max-content max-content auto max-content max-content max-content;
+    place-items: center start;
+}
+
+.dragIndicator{
+    color: #766c7c;
 }
   
 .taskCheckbox {
     padding: 6px 12px;
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
+    opacity: 0;
+    pointer-events: none;
 }
+
   
 .taskItem {
     padding: 6px 12px;
-    text-align: left;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.editTaskItem {
+    font-family: Bierstadt, sans-serif;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 0 0 0 12px;
+    height: 30px;
+    width: 100%;
+    background-color: #39333d;
+    color: white;
 }
 
 .taskDate{
     padding: 6px 12px;
-    text-align: right;
+    align-items: end;
 }
 
 .addTaskSection {
@@ -66,30 +99,57 @@ body {
     grid-template-columns: auto;
 }
   
-.addTaskBtn {
-    background-color: #db5a0f;
-    margin-right: 10px;
-    margin-left: 10px;
+.addTaskInput {
+    font-family: Bierstadt, sans-serif;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 10px 16px;
+    height: 30px;
+    background-color: #39333d;
+    color: white;
 }
-  
+
+input:focus {
+    outline-style: solid;
+    outline-color: #fff;
+    outline-width: 1px;
+}
+
 .delTaskBtn {
     background-color: #bf242a;
+    margin-left: 4px;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .editTaskBtn {
     background-color: #e98533;
+    opacity: 0;
+    pointer-events: none;
 }  
   
 ul{
     list-style-type: none;
     margin: 0;
     padding: 0;
-    Font-size: 24px;
+    Font-size: 16px;
 }
   
 ul li {
-    padding: 6px 12px;
+    padding: 4px 8px;
     border-top: 1px solid rgb(255,255,255, 0.4);
+}
+
+ul li:hover {
+    background-color: rgb(0,0,0,0.1);
+}
+
+ul li:hover .taskCheckbox, 
+ul li:hover .delTaskBtn,
+ul li:hover .editTaskBtn {
+    opacity: 1;
+    pointer-events: initial;
 }
   
 ul li:last-child {
