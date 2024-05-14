@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdDragIndicator, MdEdit, MdDelete, MdSave } from "react-icons/md";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -61,6 +61,22 @@ function TaskList() {
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && editingIndex !== null) {
+        setEditingIndex(null);
+        setUpdatedTaskText('');
+      }
+    };
+  
+    document.addEventListener('keydown', handleKeyDown);
+  
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [editingIndex, setEditingIndex]);
+
   const reorderTasks = (result) => {
     if (!result.destination) return;
     const items = Array.from(tasks);
@@ -88,14 +104,9 @@ function TaskList() {
                         <div className={`${task.completed ? 'taskCompleted' : 'taskContainer'}`}>
                           <div className="taskListItem">
                           <MdDragIndicator className="dragIndicator" />
-                          <input
-                            type="checkbox"
-                            checked={task.completed}
-                            onChange={() => toggleTaskCompletion(index)}
-                            className="taskCheckbox"
-                          />
                           {editingIndex === index ? (
                             <>
+                              <div/>
                               <input
                                 className="editTaskItem"
                                 type="text"
@@ -103,22 +114,29 @@ function TaskList() {
                                 onChange={updateTaskText}
                                 onKeyDown={saveUpdatedTask}
                               />
-                              <div className="taskDate">
-                                <span>{task.date.toLocaleDateString()}</span>
-                              </div>
-                              <button className="delTaskBtn" onClick={() => deleteTask(index)}>
-                                <MdDelete />
-                              </button>
+                              <div/>
                             </>
                           ) : (
                             <>
+                              <input
+                                type="checkbox"
+                                checked={task.completed}
+                                onChange={() => toggleTaskCompletion(index)}
+                                className="taskCheckbox"
+                              />
                               <div className="taskItem">
                                 <span>
                                   {task.text}
                                 </span>
                               </div>
                               <div className="taskDate">
-                                <span>{task.date.toLocaleDateString()}</span>
+                                <span>
+                                  {task.date.toLocaleString('en-US', {
+                                      year: 'numeric',
+                                      month: 'long', 
+                                      day: 'numeric',
+                                  })}
+                                </span>
                               </div>
                               <button className="editTaskBtn" onClick={() => startEditing(index)}>
                                 <MdEdit />
