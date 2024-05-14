@@ -22,7 +22,7 @@ function App() {
   };
 
   const RedirectIfLoggedIn = ({ children }) => {
-    return userSession ? <Navigate to="/tasks" replace /> : children;
+    return userSession ? <Navigate to="/" replace /> : children;
   };
 
   return (
@@ -46,7 +46,7 @@ function App() {
             }
           />
           <Route
-            path="/tasks"
+            path="/"
             element={
               <PrivateRoute>
                 <TaskList userSession={userSession} />

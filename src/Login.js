@@ -38,7 +38,7 @@ function Login({onLogin}) {
           if (isPasswordValid) {
             console.log("Authentication successful");
             onLogin(user.user_id);
-            navigate("/tasks");
+            navigate("/");
           } else {
             setErrorMessage("Invalid password.");
             setErrorWrapper(true);
