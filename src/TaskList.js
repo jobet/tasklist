@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdDragIndicator, MdEdit, MdDelete, MdSave } from "react-icons/md";
+import { MdDragIndicator, MdEdit, MdDelete } from "react-icons/md";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function TaskList() {
