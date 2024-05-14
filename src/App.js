@@ -49,7 +49,7 @@ function App() {
             path="/"
             element={
               <PrivateRoute>
-                <TaskList userSession={userSession} />
+                <TaskList userSession={userSession} setUserSession={setUserSession} />
               </PrivateRoute>
             }
           />

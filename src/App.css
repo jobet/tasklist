@@ -24,8 +24,41 @@ body {
 .taskWindow {
     width: 60%;
 }
-  
-  
+
+.userArea{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.userArea h2{
+    justify-content: flex-start;
+}
+
+.logoutSymbol{
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-right: 4px;
+}
+
+.logoutBtn{
+    align-self: flex-end;
+    font-size: 16px;
+    padding: 10px;
+    background-color: #ffffff00;
+    cursor: pointer;
+    transition: background-color 0.2s linear;
+}
+
+.logoutBtn span{
+    padding-top: 2px;
+}
+    
+.logoutBtn:hover {
+    background-color: #963236;
+    transition: background-color 0.2s linear;
+}
+
 .taskContainer {
     position: relative;
 }
