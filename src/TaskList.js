@@ -3,7 +3,7 @@ import { MdDragIndicator, MdEdit, MdDelete, MdLogout } from "react-icons/md";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_KEY;
@@ -11,41 +11,42 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 function TaskList({userSession, setUserSession}) {
   const [tasks, setTasks] = useState([]);
+  const [user, setUser] = useState("");
   const [newTask, setNewTask] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [updatedTaskText, setUpdatedTaskText] = useState("");
-  const [user, setUser] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchTasks();
-    fetchUser();
+    fetchUsers();
   }, [userSession]);
 
-  const fetchUser = async () => {
+  const fetchUsers = async () => {
     try {
       const { data, error } = await supabase
         .from("tasklist_users")
         .select("*")
-        .eq("user_id", userSession)
-        .single();
-  
+        .eq("user_uuid", userSession.id);
+
       if (error) {
-        console.error("Error fetching user:", error.message);
+        console.error("Error fetching users:", error.message);
       } else {
-        setUser(data);
+        setUser(data[0].user_username);
       }
     } catch (err) {
       console.error("Error:", err);
     }
   };
 
+
+
   const fetchTasks = async () => {
     try {
       const { data, error } = await supabase
         .from("tasklist_tasks")
         .select("*")
-        .eq("task_userid", userSession)
+        .eq("task_userid", userSession.id)
         .order("task_order", { ascending: true });
 
       if (error) {
@@ -68,10 +69,12 @@ function TaskList({userSession, setUserSession}) {
         const newTaskObj = {
           task_name: newTask.trim(),
           task_completed: false,
-          task_userid: userSession,
+          task_userid: userSession.id,
           task_date: new Date(),
           task_order: tasks.length + 1,
         };
+
+        setNewTask("");
   
         const { data, error } = await supabase
           .from("tasklist_tasks")
@@ -82,7 +85,6 @@ function TaskList({userSession, setUserSession}) {
           console.error("Error adding task:", error.message);
         } else {
           setTasks([...tasks, data[0]]);
-          setNewTask("");
         }
       } catch (err) {
         console.error("Error:", err);
@@ -216,18 +218,17 @@ function TaskList({userSession, setUserSession}) {
 
   const logoutUser = () => {
     setUserSession(null);
-    Cookies.remove('userSession');
-    navigate('/');
+    Cookies.remove("userSession");
+    navigate("/");
   };
 
   return (
-    <DragDropContext onDragEnd={reorderTasks}>
       <div className="container">
         <div className="taskWindow">
           <h1>Tasklist</h1>
           <div className="userArea">
             <div>
-              <h2>{user.user_username}'s Tasks</h2>
+              <h2>{user}'s Tasks</h2>
             </div>
             <div>
               <button onClick={logoutUser} className="logoutBtn">
@@ -236,6 +237,7 @@ function TaskList({userSession, setUserSession}) {
               </button>
             </div>
           </div>
+          <DragDropContext onDragEnd={reorderTasks}>
           <Droppable droppableId="tasks">
             {(provided) => (
               <ul {...provided.droppableProps} ref={provided.innerRef}>
@@ -300,6 +302,7 @@ function TaskList({userSession, setUserSession}) {
               </ul>
             )}
           </Droppable>
+          </DragDropContext>
         </div>
         <div className="addTaskSection">
           <input
@@ -312,7 +315,6 @@ function TaskList({userSession, setUserSession}) {
           />
         </div>
       </div>
-    </DragDropContext>
   );
 }
 

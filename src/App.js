@@ -13,8 +13,7 @@ function App() {
   });
 
   useEffect(() => {
-    // Store the user session in a cookie whenever it changes
-    Cookies.set("userSession", JSON.stringify(userSession), { expires: 7 }); // Expires in 7 days
+    Cookies.set("userSession", JSON.stringify(userSession), { expires: 7 });
   }, [userSession]);
 
   const PrivateRoute = ({ children }) => {

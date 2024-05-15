@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { MdError } from "react-icons/md";
-import bcrypt from "bcryptjs";
 import { Link, useNavigate } from "react-router-dom";
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
@@ -55,34 +54,61 @@ function SignUp() {
     }
 
     try {
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Check if username or email already exists
-      const { data: existingUsers, error: existingError } = await supabase
+      //Check if username exists.
+      const { data: existingUsers, error: userError } = await supabase
         .from("tasklist_users")
         .select("*")
-        .or(`user_username.eq.${username},user_email.eq.${email}`);
-
-      if (existingError) {
-        console.error("Error checking for existing users:", existingError.message);
-      } else if (existingUsers.length > 0) {
-        setErrorMessage("Account already exists.");
+        .or(`user_username.eq.${username}`);
+      
+      if (userError) {
+        setErrorMessage("Error checking for existing users.");
+        setErrorWrapper(true);
+        return;
+      }
+      else if (existingUsers.length > 0) {
+        setErrorMessage("Username is taken.");
         setErrorWrapper(true);
         return;
       }
 
-      // Insert the new user into the database
-      const { data, error } = await supabase
-        .from("tasklist_users")
-        .insert([{ user_username: username, user_password: hashedPassword, user_email: email }]);
+      //Check if email exists.
+      const { data: existingEmail, error: emailError } = await supabase.auth.admin.listUsers();
+    
+      if (emailError) {
+        setErrorMessage("Error checking for emails.");
+        setErrorWrapper(true);
+        return;
+      }
+      const emailFind = existingEmail.users.find(u => u.email === email) || null;
 
+      if(emailFind) {
+        setErrorMessage("Email is taken.");
+        setErrorWrapper(true);
+        return;
+      }
+
+      // Sign up with email and password
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+ 
       if (error) {
-        setErrorMessage("Error inserting user:", error.message);
+        setErrorMessage("Error sending confirmation email.", error.message);
         setErrorWrapper(true);
       } else {
-        console.log("User inserted successfully:", data);
-        navigate("/login");
+        // Insert the user's UUID and username into the tasklist_users table
+        const { user } = data;
+        const { error: insertError } = await supabase
+          .from("tasklist_users")
+          .insert([{ user_uuid: user.id, user_username: username }]);
+  
+        if (insertError) {
+          setErrorMessage("Error inserting user data:", insertError.message);
+          setErrorWrapper(true);
+        } else {
+          navigate("/login?signup=success");
+        }
       }
     } catch (err) {
       console.error("Error:", err);
@@ -94,8 +120,8 @@ function SignUp() {
         <div className="loginWindow">
           <h1>Sign-Up to TaskList</h1>
           <form onSubmit={handleSignUp}>
-              <label className={`${errorWrapper ? "errorMessageDisplay" : "errorMessage"}`}>
-                <MdError className="errorSymbol" />
+              <label className={`${errorWrapper ? "errorMessageDisplay" : "noMessage"}`}>
+                <MdError className="wrapperSymbol" />
                 <span>{errorMessage}</span>   
               </label>
               <span>Username</span>
