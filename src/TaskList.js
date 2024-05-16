@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MdDragIndicator, MdEdit, MdDelete, MdLogout } from "react-icons/md";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { createClient } from "@supabase/supabase-js";
@@ -10,6 +10,7 @@ const supabaseKey = process.env.REACT_APP_SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 function TaskList({userSession, setUserSession}) {
+  const textareaRef = useRef(null);
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState("");
   const [newTask, setNewTask] = useState("");
@@ -21,6 +22,25 @@ function TaskList({userSession, setUserSession}) {
     fetchTasks();
     fetchUsers();
   }, [userSession]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        textareaRef.current &&
+        !textareaRef.current.contains(e.target) &&
+        editingIndex !== null
+      ) {
+        setEditingIndex(null);
+        setUpdatedTaskText("");
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [editingIndex, setEditingIndex]);
 
   const fetchUsers = async () => {
     try {
@@ -255,12 +275,13 @@ function TaskList({userSession, setUserSession}) {
                             {editingIndex === task.task_id ? (
                               <>
                                 <div />
-                                <input
+                                <textarea
                                   className="editTaskItem"
                                   type="text"
                                   value={updatedTaskText}
                                   onChange={updateTaskText}
                                   onKeyDown={(e) => saveUpdatedTask(e, task.task_id)}
+                                  ref={textareaRef}
                                 />
                                 <div />
                               </>

@@ -83,6 +83,7 @@ body {
     display: grid;
     grid-template-columns: max-content max-content auto max-content max-content max-content;
     place-items: center start;
+    height: 40px;
 }
 
 .dragIndicator{
@@ -108,18 +109,21 @@ body {
     text-overflow: ellipsis;
 }
 
-input{
+input, textarea{
     font-family: Bierstadt, sans-serif;
     border: none;
     border-radius: 8px;
     font-size: 16px;
     background-color: #39333d;
     color: white;
+    resize: none;
+    overflow: hidden;
 }
 
 .editTaskItem {
     width: 98%;
     padding: 6px 12px;
+    height: 20px;
 }
 
 .taskDate{
@@ -140,17 +144,17 @@ input{
     height: 30px;
 }
 
-input:focus {
+input:focus, textarea:focus {
     outline-style: solid;
     outline-color: #fff;
     outline-width: 1px;
 }
 
 .delTaskBtn, .editTaskBtn {
-    cursor: pointer;
-    margin-left: -36px;
     opacity: 0;
     pointer-events: none;
+    cursor: pointer;
+    margin-left: -36px;
     padding: 6px 12px;
     font-size: 12px;
 }
@@ -349,19 +353,41 @@ ul li:last-child {
 }
 
 .delTaskBtn, .editTaskBtn{
+    opacity: 1;
+    pointer-events: none;
     font-size: 18px;
     position: absolute;
     height: 60px;
-    display: flex;
     width: 32svw;
     justify-content: center;
-    transition: none;
+    margin-left: 100svw;
 }
+
+textarea, .editTaskItem {
+    z-index: 2;
+    position: fixed;
+    left: 1svw;
+    right: 1svw;
+    top: 50svh;
+    margin: 0;
+    min-height: 100px;
+    max-height: 200px;
+    width: 98svw;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+ul li:hover .editTaskBtn,  ul li:hover .delTaskBtn{
+    opacity: 1;
+}
+
 ul li:hover .editTaskBtn {
-    right: 33svw;
+    margin-left: 32svw;
+    transition: margin ease-in-out 0.5s;
 }
 ul li:hover .delTaskBtn {
-    right: 0px;
+    margin-left: 65svw;
+    transition: margin ease-in-out 0.5s;
 }
 ul li:hover .editTaskBtn:hover{
     background-color: #4679e6;
