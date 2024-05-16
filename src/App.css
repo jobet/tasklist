@@ -326,6 +326,7 @@ ul li:last-child {
   
 .taskWindow {
     width: 100svw;
+    padding-bottom: 100px;
 }
 
 .userArea{
