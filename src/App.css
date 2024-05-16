@@ -304,8 +304,11 @@ ul li:last-child {
     color:rgb(213, 121, 255);
 }
 
-/* For smaller screens */
 @media only screen and (max-width: 600px) {
+.container{
+    overflow-x: hidden;
+}
+
 .loginInput {
     width: 95svw;
     height: 50px;
@@ -332,7 +335,8 @@ ul li:last-child {
 .taskListItem {
     grid-template-columns: max-content max-content auto max-content min-content min-content;
     align-items: center;
-    min-height: 60px;
+    height: auto;
+    padding: 15px 0px;
 }
   
 .taskItem {
