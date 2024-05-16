@@ -27,7 +27,7 @@ function TaskList({userSession, setUserSession}) {
       const { data, error } = await supabase
         .from("tasklist_users")
         .select("*")
-        .eq("user_uuid", userSession.id);
+        .eq("user_uuid", userSession);
 
       if (error) {
         console.error("Error fetching users:", error.message);
@@ -46,7 +46,7 @@ function TaskList({userSession, setUserSession}) {
       const { data, error } = await supabase
         .from("tasklist_tasks")
         .select("*")
-        .eq("task_userid", userSession.id)
+        .eq("task_userid", userSession)
         .order("task_order", { ascending: true });
 
       if (error) {
@@ -69,7 +69,7 @@ function TaskList({userSession, setUserSession}) {
         const newTaskObj = {
           task_name: newTask.trim(),
           task_completed: false,
-          task_userid: userSession.id,
+          task_userid: userSession,
           task_date: new Date(),
           task_order: tasks.length + 1,
         };

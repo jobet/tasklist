@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import TaskList from "./TaskList";
 import Login from "./Login";
 import SignUp from "./SignUp";
+import ForgotPass from "./ForgotPass";
 import "./App.css";
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
   });
 
   useEffect(() => {
-    Cookies.set("userSession", JSON.stringify(userSession), { expires: 7 });
+    Cookies.set("userSession", JSON.stringify(userSession));
   }, [userSession]);
 
   const PrivateRoute = ({ children }) => {
@@ -41,6 +42,14 @@ function App() {
             element={
               <RedirectIfLoggedIn>
                 <SignUp />
+              </RedirectIfLoggedIn>
+            }
+          />
+          <Route
+            path="/forgotpass"
+            element={
+              <RedirectIfLoggedIn>
+                <ForgotPass />
               </RedirectIfLoggedIn>
             }
           />

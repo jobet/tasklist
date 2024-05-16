@@ -10,6 +10,7 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 
 
 function Login({onLogin}) {
+  const navigate = useNavigate();
   const location = useLocation();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -17,24 +18,47 @@ function Login({onLogin}) {
   const [errorWrapper, setErrorWrapper] = useState(false);
   const [infoMessage, setInfoMessage] = useState("");
   const [infoWrapper, setInfoWrapper] = useState(false);
-  const navigate = useNavigate();
   
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    if (queryParams.get("signup") === "success") {
+    const signupParams = new URLSearchParams(location.search);
+    if (signupParams.get("signup") === "success") {
       setInfoWrapper(true);
       setInfoMessage("Account created. Please confirm your email first to log in.");
       navigate("/login");
     }
   }, [location]);
 
-  
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    if (queryParams.get("confirm") === "success") {
+    const pwResetParams = new URLSearchParams(location.search);
+    if (pwResetParams.get("passwordreset") === "success") {
       setInfoWrapper(true);
-      setInfoMessage("Account confirmed. You can now log in.");
+      setInfoMessage("Password has been reset. Please log in with your new password.");
       navigate("/login");
+    }
+  }, [location]);
+
+  useEffect(() => {
+    const emailParams = new URLSearchParams(location.search);
+    if (emailParams.get("token")) {
+      const confirmEmail = async () => {
+        try {
+          const { error } = await supabase.auth.verifyOtp({
+            type: "email",
+            token: emailParams.get("token"),
+          });
+          if (error) {
+            setErrorMessage("Error confirming email.");
+            setErrorWrapper(true);
+            return;
+          } else {
+            setInfoWrapper(true);
+            setInfoMessage("Account confirmed. You can now log in.");
+          }
+        } catch (error) {
+          console.error("Error confirming email:", error.message);
+        }
+      };
+      confirmEmail();
     }
   }, [location]);
 
@@ -42,6 +66,8 @@ function Login({onLogin}) {
     e.preventDefault();
     setErrorMessage("");
     setErrorWrapper(false);
+    setInfoMessage("");
+    setInfoWrapper(false);
   
     try {
       // Fetch data from tasklist_users table
@@ -93,8 +119,7 @@ function Login({onLogin}) {
           }
         }
         else {
-          console.log("Authentication successful");
-          onLogin(user);
+          onLogin(user.id);
           navigate("/");
         }
       }
