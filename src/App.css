@@ -9,7 +9,7 @@ body {
     display: grid;
     place-items: center;
     font-family: Bierstadt, sans-serif;
-    height: 100dvh;
+    height: 100svh;
 }
   
 .container button {
@@ -76,7 +76,7 @@ body {
     top: 50%;
     left: 0;
     right: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.5); /* Adjust color and thickness as desired */
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .taskListItem {
@@ -298,4 +298,58 @@ ul li:last-child {
 .redirectLink:active, .forgotPass:active {
     text-decoration: underline;
     color:rgb(213, 121, 255);
+}
+
+/* For smaller screens */
+@media only screen and (max-width: 600px) {
+.loginInput {
+    width: 95svw;
+    height: 50px;
+    box-sizing: border-box;
+}
+  
+.mainBtn {
+    width: 95svw;
+}
+  
+.errorMessageDisplay,
+.infoMessageDisplay {
+    width: 95svw;
+}
+  
+.taskWindow {
+    width: 100svw;
+}
+
+.userArea{
+    margin: 0px 10px;
+}
+
+.taskListItem {
+    grid-template-columns: max-content max-content auto max-content min-content min-content;
+}
+  
+.taskItem {
+    text-align: left;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.addTaskSection{
+    position: absolute;
+    bottom: 12px;
+    width: 95svw;
+}
+
+.addTaskInput {
+    padding: 10px 16px;
+    height: 50px;
+}
+
+.delTaskBtn, .editTaskBtn{
+    height: 60px;
+    width: 60px;
+    font-size: 18px;
+    justify-content: center;
+}
 }
