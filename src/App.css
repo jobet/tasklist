@@ -290,7 +290,7 @@ ul li:last-child {
     text-decoration: none;
 }
   
-.redirectLink:visited {
+.redirectLink:visited, .forgotPass:visited {
     text-decoration: none;
     color:rgb(213, 121, 255);
 }
